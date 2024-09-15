@@ -10,7 +10,7 @@ const Page = () => {
 
   useEffect(() => {
     getFilterData(query.toString());
-  }, []);
+  }, [query, getFilterData]);
 
   console.log(filterData);
 

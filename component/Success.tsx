@@ -16,7 +16,7 @@ const Success = () => {
         {
             cart.map((product:any) => {
                 return (
-                    <div >
+                    <div key={product.id} >
                         <div className="flex gap-5">
 
                         <Image src={product.image} width={100} height={100} alt={product.title} />

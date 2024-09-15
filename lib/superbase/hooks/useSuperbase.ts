@@ -1,19 +1,29 @@
 import { useState } from "react";
 import { superbase } from "../product"; // Ensure the correct import path for superbase
 
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  image: string;
+  // Add any other fields that your product contains
+}
+
 export const useSuperbase = () => {
-  const [products, setProducts] = useState<any[]>([]);
-  const [filterData, setFilterData] = useState<any[]>([]);
-  const [singleProduct, setSingleProduct] = useState<any>([]);
-  const [mensProduct, setMensProduct] = useState<any>([]);
-  const [WomensProduct, setWomensProduct] = useState<any>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filterData, setFilterData] = useState<Product[]>([]);
+  const [singleProduct, setSingleProduct] = useState<Product | null>(null);
+  const [mensProduct, setMensProduct] = useState<Product[]>([]);
+  const [WomensProduct, setWomensProduct] = useState<Product[]>([]);
 
   const getDataFromSuperbase = async () => {
     try {
-      let { data, error } = await superbase.from("product").select("*");
+      const { data, error } = await superbase.from("product").select("*");
       if (error) throw error;
       if (data) {
-        setProducts(data);
+        setProducts(data as Product[]);
         console.log("All Products:", data);
       }
     } catch (error) {
@@ -23,7 +33,7 @@ export const useSuperbase = () => {
 
   const getFilterData = async (query: string) => {
     try {
-      let { data, error } = await superbase
+      const { data, error } = await superbase
         .from("product")
         .select("*")
         .or(
@@ -31,7 +41,7 @@ export const useSuperbase = () => {
         );
       if (error) throw error;
       if (data) {
-        setFilterData(data); // Use setFilterData for filtered results
+        setFilterData(data as Product[]);
         console.log("Filtered Data:", data);
       }
     } catch (error) {
@@ -40,40 +50,53 @@ export const useSuperbase = () => {
   };
 
   const getSingleProduct = async (id: number) => {
-    let { data, error } = await superbase
-      .from("product")
-      .select("*")
-      .eq("id", id);
-    if (data) {
-      setSingleProduct(data);
-    }
-    if (error) {
-      console.log(error);
+    try {
+      const { data, error } = await superbase
+        .from("product")
+        .select("*")
+        .eq("id", id);
+      if (data) {
+        setSingleProduct(data[0] as Product);
+      }
+      if (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.error("Error fetching single product:", error);
     }
   };
 
   const getMensClothing = async () => {
-    let { data, error } = await superbase
-      .from("product")
-      .select("*")
-      .ilike("category", `men's clothing`);
-    if (data) {
-      setMensProduct(data);
-    }
-    if (error) {
-      console.log(error);
+    try {
+      const { data, error } = await superbase
+        .from("product")
+        .select("*")
+        .ilike("category", `men's clothing`);
+      if (data) {
+        setMensProduct(data as Product[]);
+      }
+      if (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.error("Error fetching men's clothing:", error);
     }
   };
+
   const getWomensClothing = async () => {
-    let { data, error } = await superbase
-      .from("product")
-      .select("*")
-      .ilike("category", `women's clothing`);
-    if (data) {
-      setWomensProduct(data);
-    }
-    if (error) {
-      console.log(error);
+    try {
+      const { data, error } = await superbase
+        .from("product")
+        .select("*")
+        .ilike("category", `women's clothing`);
+      if (data) {
+        setWomensProduct(data as Product[]);
+      }
+      if (error) {
+        console.log(error);
+      }
+    } catch (error) {
+      console.error("Error fetching women's clothing:", error);
     }
   };
 
