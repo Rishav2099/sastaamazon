@@ -27,9 +27,9 @@ const itemList = [
 const Header = () => {
   const [query, setQuery] = useState<string>('');
   const router = useRouter();
-const [user, setuser] = useState<any>(null)
+  const [user, setuser] = useState<any>(null);
 
-  const cart = useAppSelector(getCart)
+  const cart = useAppSelector(getCart);
 
   const search = () => {
     if (query.trim()) { // Ensure query is not just whitespace
@@ -39,14 +39,11 @@ const [user, setuser] = useState<any>(null)
 
   useEffect(() => {
     const getUserData = async () => {
-      const {data:user}  = await superbase.auth.getUser()
-      setuser(user)
-    }
-    getUserData()
-  }, [])
-  console.log(user);
-  
-  
+      const { data: user } = await superbase.auth.getUser();
+      setuser(user);
+    };
+    getUserData();
+  }, []);
 
   // Handle enter key press
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -57,19 +54,23 @@ const [user, setuser] = useState<any>(null)
 
   return (
     <>
+      {/* Main header */}
       <div className="bg-slate-900 py-2 text-white">
-        <div className="flex items-center justify-between w-[90%] mx-auto">
-          <div className="w-[10%]">
+        <div className="flex flex-col md:flex-row items-center justify-between w-[90%] mx-auto">
+          {/* Logo */}
+          <div className="w-[40%] md:w-[10%] mb-2 md:mb-0">
             <Link href={'/'}>
               <Image src={logo} alt="logo" width={150} height={150} />
             </Link>
           </div>
-          <div className="w-[60%] flex items-center cursor-pointer">
+
+          {/* Search bar */}
+          <div className="w-full md:w-[60%] flex items-center cursor-pointer mb-2 md:mb-0">
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyPress} // Listen for key press events
+              onKeyDown={handleKeyPress}
               className="w-full cursor-pointer px-2 outline-none py-2 rounded-l-md text-black focus:border-2 focus:border-yellow-400"
               placeholder="Search Amazon.in"
             />
@@ -77,11 +78,13 @@ const [user, setuser] = useState<any>(null)
               <FcSearch size={'24px'} className="text-black" />
             </div>
           </div>
-          <div className="flex gap-5 items-center w-[20%] justify-around cursor-pointer">
+
+          {/* User and cart info */}
+          <div className="flex gap-5 items-center justify-around w-full md:w-[20%]">
             <div className="flex flex-col items-center">
-              <p className="text-xs hover:underline" onClick={()=> {
-                router.push('/signin')
-              }}>{user ? 'Hello' : 'Signin'}</p>
+              <p className="text-xs hover:underline" onClick={() => { router.push('/signin'); }}>
+                {user ? 'Hello' : 'Signin'}
+              </p>
               <p className="font-medium text-sm">Account & Lists</p>
             </div>
             <div>
@@ -90,31 +93,44 @@ const [user, setuser] = useState<any>(null)
             </div>
             <div>
               <Link href={'/cart'}>
-              <p className="relative top-2 left-4">{cart.length}</p>
-              <div className="flex">
-                <div>
-                  <FaShoppingCart size={'40px'} />
+                <p className="relative top-2 left-4">{cart.length}</p>
+                <div className="flex">
+                  <div>
+                    <FaShoppingCart size={'40px'} />
+                  </div>
+                  <p className="mt-4">cart</p>
                 </div>
-                <p className="mt-4">cart</p>
-              </div>
               </Link>
             </div>
           </div>
         </div>
       </div>
-      <div className="bg-slate-800 w-full overflow-hidden p-2 flex justify-between">
-        <div>
+
+      {/* Navigation items */}
+      <div className="bg-slate-800 w-full overflow-hidden p-2 flex flex-col md:flex-row justify-between">
+        <div className="flex flex-wrap md:flex-nowrap">
           {itemList.map((ul, index) => (
-            <Link key={index} href={`/${ul}`} className="mx-2 hover:border border cursor-pointer p-1 border-transparent hover:border-white">
+            <Link
+              key={index}
+              href={`/${ul}`}
+              className="mx-2 hover:border border cursor-pointer p-1 border-transparent hover:border-white"
+            >
               {ul}
             </Link>
           ))}
         </div>
+
+        {/* Sign out button */}
         <div>
-          <p onClick={async()=> {
-            const {error} = await superbase.auth.signOut()
-            router.push('/signin')
-          }} className="text-yellow-500 font-bold mr-5 cursor-pointer hover:underline">Sign Out</p>
+          <p
+            onClick={async () => {
+              const { error } = await superbase.auth.signOut();
+              router.push('/signin');
+            }}
+            className="text-yellow-500 font-bold mr-5 cursor-pointer hover:underline"
+          >
+            Sign Out
+          </p>
         </div>
       </div>
     </>
